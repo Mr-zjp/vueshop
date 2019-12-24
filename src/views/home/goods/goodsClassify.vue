@@ -1,118 +1,162 @@
 <template>
-  <div>
-    <div>
-      <div class="nav">
-        <div @click="$router.go(-1)" class="go-icon"></div>
-        <div class="goods-search">请输入宝贝名称</div>
-      </div>
-      <div class="goods-content">
-        <div class="left-nav-wrap">
+  <div class="page">
+    <div class="search-header">
+      <div class="back" @click="goBack()"></div>
+      <div class="search">请输入宝贝名称</div>
+    </div>
+    <div class="goods-main">
+      <div ref="scroll-classify" class="classify-wrap">
+        <div>
           <div
+            ref="item"
+            :class="{'classify-item':true, 'active':val===index?true:false}"
             v-for="(item,index) in menu"
             :key="index"
-            :class="{'left-nav':true,'color':active===index?true:false}"
-            @click="changeColor(index,item.cid)"
+            @click="changeActive(index,item.cid)"
           >{{item.title}}</div>
         </div>
-        <div class="right-views">
-          <router-view></router-view>
-        </div>
+      </div>
+      <div class="goods-content">
+        <router-view></router-view>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import IScroll from "../../../assets/js/iscroll";
 import { mapState, mapActions } from "vuex";
 export default {
-  components: {},
-  props: {},
   data() {
     return {
-      active: -1
+      val: this.$store.state.goods.val
     };
   },
   computed: {
     ...mapState({
       menu: state => state.goods.menu,
-      goods: state => state.goods.goods
     })
   },
-  watch: {},
   created() {
-    this.getMenu();
+    this.getMenu({
+      success: () => {
+        this.$nextTick(() => {
+          this.myScroll.refresh();
+        });
+      }
+    });
   },
-  mounted() {},
+  mounted() {
+    document.title = this.$route.meta.title;
+    this.$refs["scroll-classify"].addEventListener(
+      "touchmove",
+      this.scrollPreventDefault
+    );
+    this.myScroll = new IScroll(this.$refs["scroll-classify"], {
+      scrollX: false,
+      scrollY: true,
+      preventDefault: false
+    });
+  },
+  beforeDestroy() {
+    this.$refs["scroll-classify"].removeEventListener(
+      "touchmove",
+      this.scrollPreventDefault
+    );
+  },
   methods: {
     ...mapActions({
       getMenu: "goods/getMenu",
-      getGoods: "goods/getGoods"
+      setVal: "goods/setVal"
     }),
-    changeColor(index, id) {
-      this.active = index;
+    changeActive(index, id) {
+      let top = this.$refs.item[0].offsetHeight * index;
+      let minHeight = parseInt(this.$refs["scroll-classify"].offsetHeight / 4);
+      let bottomHeight = this.$refs["scroll-classify"].scrollHeight - top;
+      if (
+        top > minHeight &&
+        bottomHeight > this.$refs["scroll-classify"].offsetHeight
+      ) {
+        this.myScroll.scrollTo(0, -top, 100, IScroll.utils.ease.elastic);
+      }
+      this.val = index;
+      this.setVal(index);
       this.$router.push("/goodsItems?cid=" + id);
-      this.getGoods({ cid: id });
-
+    },
+    goBack() {
+      this.$router.push("/index");
+    },
+    scrollPreventDefault(e) {
+      e.preventDefault();
     }
   }
 };
 </script>
 
 <style scoped>
-.nav {
+.page {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.search-header {
   width: 100%;
   height: 100px;
-  background: white;
+  background: #ffffff;
   display: flex;
+  display: -webkit-flex;
   align-items: center;
+  -webkit-align-items: center;
   border-bottom: 1px solid #efefef;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
 }
-.nav .go-icon {
-  background: url("../../../assets/images/common/right_arrow.png") center center
-    no-repeat;
-  background-size: 80%;
-  height: 80px;
+.search-header .back {
   width: 80px;
-  transform: rotate(-180deg);
+  height: 80px;
+  background-image: url("../../../assets/images/home/goods/back.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
-.goods-search {
-  width: 480px;
-  height: 70px;
-  padding-left: 60px;
-  line-height: 70px;
-  border: 1px solid #b2b2b2;
-  font-size: 24px;
-  border-radius: 3px;
-  margin-left: 40px;
-}
-.goods-content {
-  width: 100%;
-  height: auto;
-  margin-top: 100px;
-  display: flex;
-}
-.right-views {
-  margin-left: 20px;
-}
-.goods-content .left-nav-wrap {
-  width: 172px;
-  height: auto;
-}
-.left-nav {
-  width: 100%;
-  height: 82px;
+.search-header .search {
+  width: 80%;
+  height: 69px;
+  border: solid 1px #b2b2b2;
+  border-radius: 10px;
   font-size: 28px;
-  color: #323232;
-  line-height: 82px;
-  text-align: center;
-  border-bottom: 1px solid #efefef;
-  background: white;
+  color: #626262;
+  line-height: 69px;
+  padding-left: 20px;
 }
-.color {
-  color: #eb1625;
+
+.goods-main {
+  width: 100%;
+  height: 92.5vh;
+  display: flex;
+  display: -webkit-flex;
+}
+.goods-main .classify-wrap {
+  width: 172px;
+  height: 100%;
+  overflow: hidden;
+  margin-right: 3%;
+  position: relative;
+  z-index: 1;
+}
+.goods-main .classify-wrap .classify-item {
+  width: 100%;
+  height: 80px;
+  border-bottom: 1px solid #efefef;
+  background-color: #ffffff;
+  font-size: 28px;
+  text-align: center;
+  line-height: 80px;
+  overflow: hidden;
+}
+.goods-main .classify-wrap .classify-item.active {
+  color: #ff0000;
+}
+.goods-main .goods-content {
+  width: 71%;
+  height: 100%;
 }
 </style>

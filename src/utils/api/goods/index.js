@@ -4,6 +4,6 @@ import {request} from "../../axios.js";
 export function getMenuData() {
     return request(config.baseApi+"/home/category/menu?token="+config.token);
 }
-export function getGoodsData() {
-    return request(config.baseApi+"/home/category/show?cid=493&token="+config.token);
+export function getGoodsData(cid="") {
+    return request(config.baseApi+"/home/category/show?cid="+cid+"&token="+config.token);
 }

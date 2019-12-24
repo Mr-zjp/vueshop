@@ -1,6 +1,8 @@
 <template>
   <div>
+    <transition>
     <router-view></router-view>
+    </transition>
     <div class="bottom-nav">
       <ul :class="{home:true, active:homeStyle}" @click="goPage('/index')">
         <li></li>

@@ -113,12 +113,11 @@ export default {
   display: block;
 }
 .nav .go-icon {
-  background: url("../../../assets/images/common/right_arrow.png") center center
+  background: url("../../../assets/images/home/goods/back.png") center center
     no-repeat;
   background-size: 80%;
   height: 80px;
   width: 80px;
-  transform: rotate(-180deg);
 }
 .nav span:nth-child(2) {
   width: 80%;
