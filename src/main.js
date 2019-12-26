@@ -5,8 +5,6 @@ import router from './router';
 import './assets/css/common/swiper.css'
 import store from './store/index'
 import methods from './utils/publicMethods'
-import VIscroll from "viscroll";
-Vue.use(VIscroll);
 Vue.config.productionTip = false;
 Vue.prototype.$config = config;
 Vue.prototype.$methods = methods;

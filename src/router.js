@@ -31,7 +31,8 @@ let router = new Router({
                     path: "/cart",
                     name: "cart",
                     component: () => import("./views/home/cart"),
-                    meta: { keepAlive: false, title: "购物车" }
+                    meta: { keepAlive: false, title: "购物车", cart: true }
+
                 },
                 {
                     path: "/my",
@@ -50,15 +51,21 @@ let router = new Router({
                     path: "/goodsItems",
                     name: "goodsItems",
                     component: () => import("./views/home/goods/goodsItems"),
-                    meta: {title: "分类" }
+                    meta: { title: "分类" }
                 }
             ]
         },
+        {
+            path: "/login",
+            name: "login",
+            component: () => import("./views/home/login/index.vue"),
+            meta: { keepAlive: false, title: "登录" }
+        }
     ]
 });
-/* router.beforeEach((to,from,next)=>{
-    if (to.meta.auth){
-        if (Boolean(localStorage['isLogin'])){
+/* router.beforeEach((to, from, next) => {
+    if (to.meta.cart) {
+        if (Boolean(sessionStorage.getItem('isLogin'))) {
             next();
         } else {
             next("/login");

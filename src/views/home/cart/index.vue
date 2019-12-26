@@ -1,9 +1,15 @@
 <template>
   <div id="box">
-    <div class="nav">
+    <!-- <div class="nav">
       <div @click="$router.go(-1)" class="go-icon"></div>
       <span>购物车</span>
-    </div>
+    </div>-->
+    <topBar>
+      <div class="nav">
+        <div @click="$router.go(-1)" class="go-icon"></div>
+        <span>购物车</span>
+      </div>
+    </topBar>
     <div class="cart-main">
       <div class="goods-checked">
         <div class="label">
@@ -53,8 +59,11 @@
 </template>
 
 <script>
+import topBar from "../../../components/topBar";
 export default {
-  components: {},
+  components: {
+    topBar
+  },
   props: {},
   data() {
     return {
@@ -69,9 +78,6 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    goBack() {
-      console.log(this.$router)
-    },
     changeStatus() {
       this.status = !this.status;
       if (!this.status) {
@@ -92,49 +98,12 @@ export default {
 #box {
   width: 100%;
   height: auto;
-  position: relative;
-}
-.nav,
-.jiesuan {
-  width: 100%;
-  height: 100px;
-  background: white;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #efefef;
-}
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-}
-.nav span {
-  display: block;
-}
-.nav .go-icon {
-  background: url("../../../assets/images/home/goods/back.png") center center
-    no-repeat;
-  background-size: 80%;
-  height: 80px;
-  width: 80px;
-}
-.nav span:nth-child(2) {
-  width: 80%;
-  height: 100%;
-  float: left;
-  overflow: hidden;
-  font-size: 36px;
-  text-align: center;
-  line-height: 100px;
+  /* position: relative; */
 }
 /* ---------------商品信息-------------------- */
 .cart-main {
   min-height: 600px;
   width: 100%;
-  position: absolute;
-  top: 100px;
-  left: 0;
 }
 .cart-main .goods-checked {
   display: flex;
@@ -142,6 +111,14 @@ export default {
   height: 240px;
   border-bottom: 2px solid #efefef;
   background: white;
+}
+.jiesuan {
+  width: 100%;
+  height: 100px;
+  background: white;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #efefef;
 }
 .cart-main .goods-checked .label,
 .jiesuan .label {

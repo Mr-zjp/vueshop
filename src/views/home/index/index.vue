@@ -7,7 +7,7 @@
         <div class="search-icon"></div>
         <div>输入喜欢的宝贝名称</div>
       </div>
-      <div class="login">登录</div>
+      <div class="login" @click="$router.push('/login')">登录</div>
     </div>
     <!-- 轮播 -->
     <div class="swiper-container" ref="swiper-container">
