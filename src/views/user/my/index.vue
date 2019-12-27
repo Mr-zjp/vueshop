@@ -2,20 +2,20 @@
   <div>
     <topBar>
       <div class="nav">
-        <div @click="$router.go(-1)" class="go-icon"></div>
-        <span>会员中心</span>
+        <div @click="$router.go(-1)" :class="{'go-icon':false}"></div>
+        <span class="css2">会员中心</span>
       </div>
     </topBar>
     <div class="header">
       <div class="content">
         <div class="header-img">
-          <img src="../../../assets/images/user/my/default-head.png" alt />
+          <img :src="head?head:require('../../../assets/images/user/my/default-head.png')" alt />
         </div>
         <div class="news">
-          <div>昵称</div>
+          <div>{{nickname?nickname:"昵称"}}</div>
           <div>
             我的积分：
-            <span>{{0}}</span>
+            <span>{{points}}</span>
           </div>
         </div>
       </div>
@@ -55,12 +55,20 @@
       <div>我的收藏</div>
       <div class="Collection"></div>
     </div>
-    <div class="login-reg" @click="$router.push('/login')">登录/注册</div>
+    <div
+      class="login-reg"
+      @click="isLogin?outLogin():$router.push('/login')"
+    >{{isLogin?"安全退出":"登录/注册"}}</div>
   </div>
 </template>
 
 <script>
+import Vue from "vue";
 import topBar from "../../../components/topBar";
+import { safeOutLoginData } from "../../../utils/api/user/index.js";
+import { mapActions, mapState, mapMutations } from "vuex";
+import { Dialog } from "vant";
+Vue.use(Dialog);
 export default {
   components: {
     topBar
@@ -69,11 +77,40 @@ export default {
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      isLogin: state => state.user.isLogin,
+      uid: state => state.user.uid,
+      nickname: state => state.user.nickname,
+      authToken: state => state.user.authToken,
+      points: state => state.user.points,
+      head: state => state.user.head
+    })
+  },
   watch: {},
-  created() {},
+  created() {
+  //this.safeUser();
+    this.getUser();
+  },
   mounted() {},
-  methods: {}
+  methods: {
+    ...mapActions({
+      asyncOutLogin: "user/outLogin",
+      safeUser: "user/safeUser",
+      getUser: "user/getUser"
+    }),
+    //安全退出
+    outLogin() {
+      Dialog.confirm({
+        title: "",
+        message: "确认要退出吗？"
+      })
+        .then(() => {
+          this.asyncOutLogin();
+        })
+        .catch(() => {});
+    }
+  }
 };
 </script>
 
@@ -196,12 +233,12 @@ export default {
 .login-reg {
   width: 70%;
   height: 80px;
-  margin: 30px  auto;
+  margin: 30px auto;
   background-color: #e51b19;
   border-radius: 3px;
-  line-height:80px;
+  line-height: 80px;
   text-align: center;
-  font-size:32px;
+  font-size: 32px;
   color: #ffffff;
 }
 </style>

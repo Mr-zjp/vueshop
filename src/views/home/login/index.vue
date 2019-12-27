@@ -32,7 +32,7 @@
         </div>
         <div>
           <img src="../../../assets/images/home/index/reg.png" alt />
-          <span>快速注册</span>
+          <span @click="$router.push('/register')">快速注册</span>
         </div>
       </div>
     </div>
@@ -61,7 +61,9 @@ export default {
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    document.title = this.$route.meta.title;
+  },
   destroyed() {},
   methods: {
     ...mapActions({
@@ -83,12 +85,16 @@ export default {
       this.userLogin({
         cellphone: this.iphone,
         password: this.password,
-        success: (res) => {
-            if(res.code==200){
-                this.$router.go(-1);
-            }else{
-                Toast(res.data)
+        success: res => {
+          if (res.code == 200) {
+            if (this.$route.from === "reg") {
+              this.$router.go(-3);
+            } else {
+              this.$router.go(-1);
             }
+          } else {
+            Toast(res.data);
+          }
         }
       });
     }
@@ -103,10 +109,8 @@ export default {
   background-color: #ffffff;
 }
 .login {
-  margin-top: 0px;
   width: 100%;
   padding-top: 20px;
-  overflow: hidden;
 }
 .inputs {
   width: 90%;

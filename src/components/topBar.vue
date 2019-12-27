@@ -9,9 +9,7 @@ export default {
   components: {},
   props: {},
   data() {
-    return {
-      title: "555"
-    };
+    return {};
   },
   computed: {},
   watch: {},
@@ -22,16 +20,13 @@ export default {
 </script>
 
 <style scoped>
-.nav{
+.nav {
   width: 100%;
-  height:100px;
+  height: 100px;
   background: white;
   display: flex;
   align-items: center;
   border-bottom: 1px solid #efefef;
-}
-.nav span {
-  display: block;
 }
 .nav .go-icon {
   background: url("../assets/images/home/goods/back.png") center center
@@ -40,7 +35,8 @@ export default {
   height: 80px;
   width: 80px;
 }
-.nav span:nth-child(2) {
+.nav span {
+  display: block;
   width: 80%;
   height: 100%;
   float: left;
@@ -48,5 +44,8 @@ export default {
   font-size: 32px;
   text-align: center;
   line-height: 100px;
+}
+.nav span.css2 {
+  width: 100%;
 }
 </style>

@@ -38,7 +38,7 @@ let router = new Router({
                     path: "/my",
                     name: "my",
                     component: () => import("./views/user/my"),
-                    meta: { keepAlive: false, title: "我的" }
+                    meta: { keepAlive: false, title: "个人中心" }
                 },
             ]
         },
@@ -60,10 +60,16 @@ let router = new Router({
             name: "login",
             component: () => import("./views/home/login/index.vue"),
             meta: { keepAlive: false, title: "登录" }
-        }
+        },
+        {
+            path: "/register",
+            name: "register",
+            component: () => import("./views/home/register/index.vue"),
+            meta: { keepAlive: false, title: "注册" }
+        },
     ]
 });
-/* router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
     if (to.meta.cart) {
         if (Boolean(sessionStorage.getItem('isLogin'))) {
             next();
@@ -73,5 +79,5 @@ let router = new Router({
     } else {
         next();
     }
-}); */
+});
 export default router;

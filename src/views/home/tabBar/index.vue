@@ -1,9 +1,7 @@
 <template>
   <div>
-    <transition>
     <router-view></router-view>
-    </transition>
-    <div class="bottom-nav">
+    <div :class="{'bottom-nav':true,'bottom-nav2':flag}">
       <ul :class="{home:true, active:homeStyle}" @click="goPage('/index')">
         <li></li>
         <li>首页</li>
@@ -27,7 +25,8 @@ export default {
     return {
       homeStyle: true,
       cartStyle: false,
-      myStyle: false
+      myStyle: false,
+      flag: this.$store.state.index.flag
     };
   },
   methods: {
@@ -90,6 +89,9 @@ export default {
   align-items: center;
   padding: 0 20px;
   z-index: 10;
+}
+.bottom-nav.bottom-nav2 {
+  z-index: 0;
 }
 .bottom-nav ul {
   width: 100px;

@@ -1,131 +1,141 @@
 <template>
   <div id="box">
-    <!--头部搜索 -->
-    <div :class="{header:true,scroll:isScroll}">
-      <div class="classify-icon" @click="$router.push('/goods/goodsClassify')"></div>
-      <div class="search">
-        <div class="search-icon"></div>
-        <div>输入喜欢的宝贝名称</div>
-      </div>
-      <div class="login" @click="$router.push('/login')">登录</div>
-    </div>
-    <!-- 轮播 -->
-    <div class="swiper-container" ref="swiper-container">
-      <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="(item,index) in banners" :key="index">
-          <img :src="item.image" alt />
+    <div v-if="flag">
+      <!--头部搜索 -->
+      <div :class="{header:true,scroll:isScroll}">
+        <div class="classify-icon" @click="$router.push('/goods/goodsClassify')"></div>
+        <div class="search">
+          <div class="search-icon"></div>
+          <div @click="flag=false">输入喜欢的宝贝名称</div>
         </div>
+        <div class="login" @click="$router.push('/login')" v-if="!isLogin">登录</div>
+        <div class="my-icon" @click="$router.push('/my')" v-else></div>
       </div>
-      <div class="swiper-pagination" ref="swiper-pagination"></div>
-    </div>
-    <!-- 商品分类 -->
-    <div class="nav-wrap">
-      <ul class="item" v-for="(item,index) in navClass" :key="index">
-        <li>
-          <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-        </li>
-        <li>{{item.title}}</li>
-      </ul>
-    </div>
-    <!--商品展示 -->
-    <template v-for="(item,index) in goods">
-      <div class="goods-main" :key="index" v-if="(index+1)%2!==0">
-        <div :class="'goods-title color-'+index">—— {{item.title}} ——</div>
-        <div class="goods-row-1">
-          <div class="goods-column">
-            <div>{{item.items&&item.items[0].title}}</div>
-            <div>
-              <span>精品打折</span>
-              <span :class="'bg-color-'+index">{{item.items&&item.items[0].price}}</span>
-            </div>
-            <div>
-              <img
-                :data-echo="item.items&&item.items[0].image"
-                src="../../../assets/images/common/lazyImg.jpg"
-                alt
-              />
-            </div>
+      <!-- 轮播 -->
+      <div class="swiper-container" ref="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" v-for="(item,index) in banners" :key="index">
+            <img :src="item.image" alt />
           </div>
-          <div class="goods-column">
-            <div
-              class="goods-list goods-list1"
-              v-for="(item2,index2) in item.items.slice(1,3)"
-              :key="index2"
-            >
-              <div class="goods-list-title">
-                <div>{{item2.title}}</div>
-                <div>品质精挑</div>
+        </div>
+        <div class="swiper-pagination" ref="swiper-pagination"></div>
+      </div>
+      <!-- 商品分类 -->
+      <div class="nav-wrap">
+        <ul class="item" v-for="(item,index) in navClass" :key="index">
+          <li>
+            <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+          </li>
+          <li>{{item.title}}</li>
+        </ul>
+      </div>
+      <!--商品展示 -->
+      <template v-for="(item,index) in goods">
+        <div class="goods-main" :key="index" v-if="(index+1)%2!==0">
+          <div :class="'goods-title color-'+index">—— {{item.title}} ——</div>
+          <div class="goods-row-1">
+            <div class="goods-column">
+              <div>{{item.items&&item.items[0].title}}</div>
+              <div>
+                <span>精品打折</span>
+                <span :class="'bg-color-'+index">{{item.items&&item.items[0].price}}</span>
               </div>
-              <img :data-echo="item2.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+              <div>
+                <img
+                  :data-echo="item.items&&item.items[0].image"
+                  src="../../../assets/images/common/lazyImg.jpg"
+                  alt
+                />
+              </div>
+            </div>
+            <div class="goods-column">
+              <div
+                class="goods-list goods-list1"
+                v-for="(item2,index2) in item.items.slice(1,3)"
+                :key="index2"
+              >
+                <div class="goods-list-title">
+                  <div>{{item2.title}}</div>
+                  <div>品质精挑</div>
+                </div>
+                <img :data-echo="item2.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+              </div>
+            </div>
+          </div>
+          <div class="goods-row-2">
+            <div class="goods-list" v-for="(item,index) in item.items.slice(3,7)" :key="index">
+              <div class="hidden">{{item.title}}</div>
+              <div>
+                <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+              </div>
+              <div>¥{{item.price}}</div>
+              <div>¥{{item.price*2}}</div>
             </div>
           </div>
         </div>
-        <div class="goods-row-2">
-          <div class="goods-list" v-for="(item,index) in item.items.slice(3,7)" :key="index">
-            <div class="hidden">{{item.title}}</div>
-            <div>
-              <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+        <div class="goods-main" :key="index" v-else>
+          <div class="goods-title color-1">—— {{item.title}} ——</div>
+          <div class="goods-row-1">
+            <div class="goods-column" v-for="(item,index) in item.items.slice(0,2)" :key="index">
+              <div>{{item.title}}</div>
+              <div class="nz-tip">火爆开售</div>
+              <div class="nz-tip-img">
+                <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+              </div>
             </div>
-            <div>¥{{item.price}}</div>
-            <div>¥{{item.price*2}}</div>
           </div>
+          <div class="goods-row-2">
+            <div class="goods-list" v-for="(item,index) in item.items.slice(2,6)" :key="index">
+              <div class="hidden">{{item.title}}</div>
+              <div>
+                <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+              </div>
+              <div>¥{{item.price}}</div>
+              <div>¥{{item.price*2}}</div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <div class="goods-recommend">
+        <div>
+          <div class="left-line"></div>
+          <div class="text-tip">
+            <div></div>
+            <div>为你推荐</div>
+          </div>
+          <div class="right-line"></div>
         </div>
       </div>
-      <div class="goods-main" :key="index" v-else>
-        <div class="goods-title color-1">—— {{item.title}} ——</div>
-        <div class="goods-row-1">
-          <div class="goods-column" v-for="(item,index) in item.items.slice(0,2)" :key="index">
-            <div>{{item.title}}</div>
-            <div class="nz-tip">火爆开售</div>
-            <div class="nz-tip-img">
-              <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-            </div>
+      <div class="recommend-content">
+        <div class="goods-show" v-for="(item,index) in recoms" :key="index">
+          <div>
+            <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
           </div>
-        </div>
-        <div class="goods-row-2">
-          <div class="goods-list" v-for="(item,index) in item.items.slice(2,6)" :key="index">
-            <div class="hidden">{{item.title}}</div>
-            <div>
-              <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-            </div>
-            <div>¥{{item.price}}</div>
-            <div>¥{{item.price*2}}</div>
+          <div>
+            <p>{{item.title}}</p>
           </div>
+          <div>¥{{item.price}}</div>
         </div>
-      </div>
-    </template>
-    <div class="goods-recommend">
-      <div>
-        <div class="left-line"></div>
-        <div class="text-tip">
-          <div></div>
-          <div>为你推荐</div>
-        </div>
-        <div class="right-line"></div>
       </div>
     </div>
-    <div class="recommend-content">
-      <div class="goods-show" v-for="(item,index) in recoms" :key="index">
-        <div>
-          <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-        </div>
-        <div>
-          <p>{{item.title}}</p>
-        </div>
-        <div>¥{{item.price}}</div>
-      </div>
+    <div v-else>
+      <search @update="change($event)"></search>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+import search from "../../../components/search";
 export default {
-  components: {},
+  components: {
+    search
+  },
   props: {},
   data() {
     return {
-      isScroll: false
+      isScroll: false,
+      flag: this.$store.state.index.flag
     };
   },
   computed: {
@@ -133,7 +143,8 @@ export default {
       banners: state => state.index.img,
       navClass: state => state.index.navData,
       goods: state => state.index.products,
-      recoms: state => state.index.recom
+      recoms: state => state.index.recom,
+      isLogin: state => state.user.isLogin
     })
   },
   watch: {},
@@ -193,6 +204,9 @@ export default {
       getProducts: "index/getProduct",
       getRecom: "index/getRecom"
     }),
+    change(e) {
+      this.flag = e;
+    },
     eventScrollTop() {
       let top = document.body.scrollTop || document.documentElement.scrollTop;
       if (top >= 150) {
@@ -271,6 +285,14 @@ export default {
   width: auto;
   font-size: 32px;
   color: white;
+}
+.my-icon {
+  width: 60px;
+  height: 60px;
+  background-image: url("../../../assets/images/home/index/my.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 /* --------------------轮播图----------------------- */
 .swiper-container {

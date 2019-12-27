@@ -10,7 +10,9 @@ export default {
         img: [],
         navData: [],
         products: [],
-        recom: []
+        recom: [],
+        flag: true,
+        record: sessionStorage.getItem('record') ? sessionStorage.getItem('record').split(',') : []
     },
     mutations: {
         ['GET_BANNER'](state, payload) {
@@ -25,19 +27,27 @@ export default {
         ['GET_RECOM'](state, payload) {
             state.recom = payload
         },
+        ['SET_RECORD'](state, payload) {
+            state.record = payload
+            sessionStorage.setItem['record'] = JSON.stringify(payload)
+        },
     },
     actions: {
         getBanner(conText) {
             getBannerData().then(res => {
                 if (res.code === 200) {
-                    conText.commit('GET_BANNER', { img: res.data });
+                    conText.commit('GET_BANNER', {
+                        img: res.data
+                    });
                 }
             })
         },
         getNav(conText, payload) {
             getNavData().then(res => {
                 if (res.code === 200) {
-                    conText.commit('GET_NAV', { navData: res.data });
+                    conText.commit('GET_NAV', {
+                        navData: res.data
+                    });
                     if (payload.success) {
                         payload.success();
                     }
@@ -47,7 +57,9 @@ export default {
         getProduct(conText, payload) {
             getProducts().then(res => {
                 if (res.code === 200) {
-                    conText.commit('GET_PRODUCTS', { products: res.data });
+                    conText.commit('GET_PRODUCTS', {
+                        products: res.data
+                    });
                     if (payload.success) {
                         payload.success();
                     }
@@ -63,6 +75,6 @@ export default {
                     }
                 }
             })
-        }
+        },
     }
 }
