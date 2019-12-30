@@ -11,8 +11,7 @@ export default {
         navData: [],
         products: [],
         recom: [],
-        flag: true,
-        record: sessionStorage.getItem('record') ? sessionStorage.getItem('record').split(',') : []
+        flag: true,//控制底部导航和搜索页面css z-index属性
     },
     mutations: {
         ['GET_BANNER'](state, payload) {
@@ -27,10 +26,6 @@ export default {
         ['GET_RECOM'](state, payload) {
             state.recom = payload
         },
-        ['SET_RECORD'](state, payload) {
-            state.record = payload
-            sessionStorage.setItem['record'] = JSON.stringify(payload)
-        },
     },
     actions: {
         getBanner(conText) {
@@ -40,7 +35,7 @@ export default {
                         img: res.data
                     });
                 }
-            })
+            }).catch(()=>{})
         },
         getNav(conText, payload) {
             getNavData().then(res => {
@@ -52,7 +47,7 @@ export default {
                         payload.success();
                     }
                 }
-            })
+            }).catch(()=>{})
         },
         getProduct(conText, payload) {
             getProducts().then(res => {
@@ -64,7 +59,7 @@ export default {
                         payload.success();
                     }
                 }
-            })
+            }).catch(()=>{})
         },
         getRecom(conText, payload) {
             getRecomData().then(res => {
@@ -74,7 +69,7 @@ export default {
                         payload.success();
                     }
                 }
-            })
+            }).catch(()=>{})
         },
     }
 }

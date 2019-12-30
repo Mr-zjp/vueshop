@@ -84,7 +84,7 @@ export default {
                 if (payload.success) {
                     payload.success(res)
                 }
-            })
+            }).catch(res=>{});
         },
         //会员认证
         safeUser(conText, payload) {
@@ -93,7 +93,7 @@ export default {
                 auth_token: conText.state.authToken
             }).then(res => {
                 console.log(res)
-            })
+            }).catch(()=>{});
         },
         //获取会员信息
         getUser(conText, payload) {
@@ -105,7 +105,7 @@ export default {
                         nickname: res.data.nickname,
                     })
                 }
-            })
+            }).catch(()=>{});
         },
         //安全退出
         outLogin(conText) {
@@ -115,7 +115,7 @@ export default {
                 if (res.code === 200) {
                     conText.commit("OUT_LOGIN");
                 }
-            });
+            }).catch(()=>{});
         },
     }
 }

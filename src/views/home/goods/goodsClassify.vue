@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     ...mapState({
-      menu: state => state.goods.menu,
+      menu: state => state.goods.menu
     })
   },
   created() {

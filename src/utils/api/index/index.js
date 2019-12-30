@@ -16,7 +16,3 @@ export function getProducts(){
 export function getRecomData(){
     return request(config.baseApi+"/home/index/recom?token="+config.token);
 }
-//搜索
-export function getSearchData(){
-    return request(config.baseApi+"/home/goods/param?kwords=连衣裙?token="+config.token);
-}

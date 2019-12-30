@@ -6,7 +6,7 @@
         <div>
           <input type="text" placeholder="请输入商品名称" v-model="text" />
         </div>
-        <div @click="addRecord"></div>
+        <div @click="addRecord(text)"></div>
       </div>
     </div>
     <div class="search-history" v-if="record.length>0">
@@ -15,7 +15,12 @@
         <span @click="empty"></span>
       </div>
       <div class="search-history-record">
-        <div class="search-history-keywords" v-for="(item,index) in record" :key="index">{{item}}</div>
+        <div
+          class="search-history-keywords"
+          v-for="(item,index) in record"
+          :key="index"
+          @click="addRecord(item)"
+        >{{item}}</div>
       </div>
     </div>
     <div class="search-hot">
@@ -23,14 +28,22 @@
         <span>热门搜索</span>
       </div>
       <div class="search-hot-record">
-        <div class="search-hot-keywords" v-for="(item,index) in record" :key="index">{{item}}</div>
+        <div
+          class="search-hot-keywords"
+          v-for="(item,index) in newHot"
+          :key="index"
+          @click="addRecord(item.title)"
+        >{{item.title}}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import Vue from "vue";
+import { Dialog } from "vant";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+Vue.use(Dialog);
 export default {
   components: {},
   props: {},
@@ -41,30 +54,51 @@ export default {
   },
   computed: {
     ...mapState({
-      record: state => state.index.record
+      record: state => state.search.record
+    }),
+    ...mapGetters({
+      newHot: "search/getArr"
     })
   },
   watch: {},
-  created() {},
+  created() {
+    this.getHotSearch();
+  },
   mounted() {},
   methods: {
     ...mapMutations({
-      SET_RECORD: "index/SET_RECORD"
+      SET_RECORD: "search/SET_RECORD",
+      REMOVE_RECORD: "search/REMOVE_RECORD"
+    }),
+    ...mapActions({
+      getHotSearch: "search/getHotSearch",
+      getResult: "search/getResult"
     }),
     back() {
       this.$emit("update", true);
     },
-    addRecord() {
-      if (this.record.length > 0 && this.record.indexOf(this.text) > -1) {
-        return;
-      } else {
-        if (this.text) {
-          this.record.unshift(this.text);
+    addRecord(val) {
+      console.log(val)
+      let params = val || this.text || "";
+      if (this.record.indexOf(params) == -1) {
+        if (params) {
+          this.record.unshift(params);
           this.SET_RECORD(this.record);
         }
+        //this.getResult(params);
       }
+       this.$router.push("/search?keyword=" + params);
     },
-    empty() {}
+    empty() {
+      Dialog.confirm({
+        title: "",
+        message: "确认要清空记录？"
+      })
+        .then(() => {
+          this.REMOVE_RECORD();
+        })
+        .catch(() => {});
+    }
   }
 };
 </script>
