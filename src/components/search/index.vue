@@ -1,7 +1,7 @@
 <template>
-  <div id="search">
+  <div id="search-0" class="search-0" v-show="show.show">
     <div class="search-head">
-      <div class="search-head-x" @click="back"></div>
+      <div class="search-head-x" @click="show.show=false"></div>
       <div class="search-head-input">
         <div>
           <input type="text" placeholder="请输入商品名称" v-model="text" />
@@ -46,7 +46,16 @@ import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 Vue.use(Dialog);
 export default {
   components: {},
-  props: {},
+  props: {
+    show: {
+      type: Object,
+      default: {}
+    },
+    isGoodsClass: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       text: ""
@@ -78,7 +87,6 @@ export default {
       this.$emit("update", true);
     },
     addRecord(val) {
-      console.log(val)
       let params = val || this.text || "";
       if (this.record.indexOf(params) == -1) {
         if (params) {
@@ -87,7 +95,12 @@ export default {
         }
         //this.getResult(params);
       }
-       this.$router.push("/search?keyword=" + params);
+      this.show.show = false;
+      if (this.isGoodsClass) {
+        this.$router.replace("/search?keyword=" + params);
+      } else {
+        this.$router.push("/search?keyword=" + params);
+      }
     },
     empty() {
       Dialog.confirm({
@@ -104,14 +117,14 @@ export default {
 </script>
 
 <style scoped>
-#search {
+#search-0 {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: white;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 50;
+  z-index: 99;
 }
 .search-head {
   width: 100%;

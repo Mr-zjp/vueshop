@@ -3,7 +3,7 @@
     <div class="header-box">
       <div class="header">
         <div class="classify-icon" @click="$router.go(-1)"></div>
-        <div class="search">
+        <div class="search" @click="searchShow.show=true">
           <div class="search-icon"></div>
           <div>{{text}}</div>
         </div>
@@ -36,36 +36,55 @@
       </div>
     </div>
     <div :class="{'bg-opcity':screenBox}" @click="screenBox=false"></div>
-    <div class="screen-box" v-if="screenBox">
-      <div class="title-tip">
-        <div class="goods-classify" @click="classify=!classify">
-          <span>分类</span>
-          <span :class="{'bg-img-0':true, 'bg-img-1':classify}"></span>
+    <transition name="fade">
+      <div class="screen-box" v-if="screenBox">
+        <div class="title-tip">
+          <div class="goods-classify" @click="classify=!classify">
+            <span>分类</span>
+            <span :class="{'bg-img-0':true, 'bg-img-1':classify}"></span>
+          </div>
+          <div class="classify" v-if="classify">
+            <div
+              v-for="(item,index) in menu"
+              :key="index"
+              :class="{'bg-color-0':true,'bg-color-1':classifyActive===index?true:false}"
+              @click="checkClassify(index)"
+            >{{item.title}}</div>
+          </div>
         </div>
-        <div class="classify" v-if="classify">
-          <div v-for="(item,index) in menu" :key="index">{{item.title}}</div>
+        <div class="title-tip">
+          <div class="price-section" @click="priceSection=!priceSection">
+            <span>价格区间</span>
+            <span :class="{'bg-img-0':true, 'bg-img-1':priceSection}"></span>
+          </div>
+          <div class="price-section-item" v-if="priceSection">
+            <div
+              v-for="(item,index) in price"
+              :key="index"
+              :class="{'bg-color-0':true,'bg-color-1':priceActive===index?true:false}"
+              @click="checkPrice(index)"
+            >{{item}}</div>
+          </div>
         </div>
       </div>
-      <div class="title-tip">
-        <div class="price-section" @click="priceSection=!priceSection">
-          <span>价格区间</span>
-          <span :class="{'bg-img-0':true, 'bg-img-1':priceSection}"></span>
-        </div>
-        <div class="classifys" v-if="priceSection">
-          <div v-for="(item,index) in price" :key="index">{{item}}</div>
-        </div>
-      </div>
-    </div>
+    </transition>
+    <searchComponent :show="searchShow" :isGoodsClass="true" />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
+import searchComponent from "../../../components/search";
 export default {
-  components: {},
+  components: {
+    searchComponent
+  },
   props: {},
   data() {
     return {
+      searchShow: {
+        show: false
+      }, //控制搜索页面和搜索组件的显示隐藏
       text: this.$route.query.keyword ? this.$route.query.keyword : "",
       title: "综合",
       comprehensive: false, //控制综合样式
@@ -73,6 +92,8 @@ export default {
       screenBox: false, //控制筛选
       classify: false, //控制分类
       priceSection: false, //控制价格区间
+      classifyActive: -1, //控制当前点击的分类的背景色
+      priceActive: -1, //控制当前点击的价格区间的背景色
       conditionItems: ["综合", "价格由高到低", "价格由低到高"],
       price: ["1-50", "51-99", "100-300", "301-1000", "1001-9999"]
     };
@@ -86,15 +107,25 @@ export default {
   created() {
     this.getMenu({
       success: () => {
-       console.log(111)
+        //console.log(111);
       }
     });
   },
   mounted() {},
+  beforeRouteUpdate(to, from, next) {
+    this.text = to.query.keyword;
+    next();
+  },
   methods: {
     ...mapActions({
       getMenu: "goods/getMenu"
-    })
+    }),
+    checkClassify(index) {
+      this.classifyActive = index;
+    },
+    checkPrice(index) {
+      this.priceActive = index;
+    }
   }
 };
 </script>
@@ -296,7 +327,7 @@ export default {
   justify-content: flex-start;
   margin-top: 3px;
 }
-.classifys {
+.price-section-item {
   width: 100%;
   height: 170px;
   display: flex;
@@ -304,8 +335,8 @@ export default {
   justify-content: flex-start;
   margin-top: 3px;
 }
-.classify div,
-.classifys div {
+.classify > .bg-color-0,
+.price-section-item > .bg-color-0 {
   width: 30%;
   height: 64px;
   background-color: #efefef;
@@ -317,5 +348,19 @@ export default {
   margin-left: 2%;
   margin-right: 1%;
   margin-bottom: 20px;
+}
+.classify > .bg-color-0.bg-color-1,
+.price-section-item > .bg-color-0.bg-color-1 {
+  background: #fda208;
+  color: white;
+}
+.fade-enter {
+  right: -600px;
+}
+.fade-enter-active {
+  transition: all 1s;
+}
+.fade-leave {
+  right: 600px;
 }
 </style>

@@ -26,7 +26,7 @@ export default {
       homeStyle: true,
       cartStyle: false,
       myStyle: false,
-      flag: this.$store.state.index.flag
+      flag:this.$store.state.index.flag
     };
   },
   methods: {
@@ -90,7 +90,7 @@ export default {
   padding: 0 20px;
   z-index: 10;
 }
-.bottom-nav.bottom-nav2 {
+.bottom-nav.bottom-nav2{
   z-index: 0;
 }
 .bottom-nav ul {

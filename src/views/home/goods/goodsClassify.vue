@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div class="search-header">
+    <div class="search-header" @click="searchShow.show=true">
       <div class="back" @click="goBack()"></div>
       <div class="search">请输入宝贝名称</div>
     </div>
@@ -20,16 +20,27 @@
         <router-view></router-view>
       </div>
     </div>
+    <my-search :show="searchShow"></my-search>
   </div>
 </template>
 
 <script>
 import IScroll from "../../../assets/js/iscroll";
-import { mapState, mapActions } from "vuex";
+import mySearch from "../../../components/search";
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
+  components: {
+    mySearch: mySearch
+  },
   data() {
     return {
-      val: this.$store.state.goods.val
+      val: this.$store.state.goods.val ? this.$store.state.goods.val : 0,
+      goodsId: this.$store.state.goods.classId
+        ? this.$store.state.goods.classId
+        : "",
+      searchShow: {
+        show: false
+      } //控制搜索页面和搜索组件的显示隐藏
     };
   },
   computed: {
@@ -45,6 +56,7 @@ export default {
         });
       }
     });
+    this.$router.push("/goods/classify/items?cid=" + this.goodsId);
   },
   mounted() {
     document.title = this.$route.meta.title;
@@ -67,6 +79,7 @@ export default {
   methods: {
     ...mapActions({
       getMenu: "goods/getMenu",
+      setId: "goods/setId",
       setVal: "goods/setVal"
     }),
     changeActive(index, id) {
@@ -80,8 +93,9 @@ export default {
         this.myScroll.scrollTo(0, -top, 100, IScroll.utils.ease.elastic);
       }
       this.val = index;
+      this.setId(id);
       this.setVal(index);
-      this.$router.push("/goodsItems?cid=" + id);
+      this.$router.push("/goods/classify/items?cid=" + id);
     },
     goBack() {
       this.$router.push("/index");

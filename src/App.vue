@@ -11,7 +11,7 @@
 export default {
   name: "app",
   created() {
-   /*  if (sessionStorage.getItem("store")) {
+    if (sessionStorage.getItem("store")) {
       this.$store.replaceState(
         Object.assign(
           {},
@@ -23,7 +23,7 @@ export default {
     //在页面刷新时将vuex里的信息保存到sessionStorage里
     window.addEventListener("beforeunload", () => {
       sessionStorage.setItem("store", JSON.stringify(this.$store.state));
-    }); */
+    });
   }
 };
 </script>

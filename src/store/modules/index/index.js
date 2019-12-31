@@ -28,12 +28,15 @@ export default {
         },
     },
     actions: {
-        getBanner(conText) {
+        getBanner(conText,payload) {
             getBannerData().then(res => {
                 if (res.code === 200) {
                     conText.commit('GET_BANNER', {
                         img: res.data
                     });
+                    if(payload.success){
+                        payload.success();
+                    }
                 }
             }).catch(()=>{})
         },

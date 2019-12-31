@@ -7,7 +7,8 @@ export default {
     state: {
         menu: [],
         goods: [],
-        val: 0
+        val: 0,//页面离开时存储当前导航的index
+        classId:'',//页面离开时存储当前导航的id
     },
     mutations: {
         ['GET_MENU'](state, payload) {
@@ -18,6 +19,9 @@ export default {
         },
         ['SET_VAL'](state, payload) {
             state.val = payload
+        },
+        ['SET_ID'](state, payload) {
+            state.classId = payload
         }
     },
     actions: {
@@ -44,7 +48,11 @@ export default {
             })
         },
         setVal(conText, payload) {
+            console.log(payload)
             conText.commit('SET_VAL', payload)
+        },
+        setId(conText, payload) {
+            conText.commit('SET_ID', payload)
         }
     }
 }

@@ -1,126 +1,122 @@
 <template>
   <div id="box">
-    <div v-if="flag">
-      <!--头部搜索 -->
-      <div :class="{header:true,scroll:isScroll}">
-        <div class="classify-icon" @click="$router.push('/goods/goodsClassify')"></div>
-        <div class="search">
-          <div class="search-icon"></div>
-          <div @click="flag=false">输入喜欢的宝贝名称</div>
-        </div>
-        <div class="login" @click="$router.push('/login')" v-if="!isLogin">登录</div>
-        <div class="my-icon" @click="$router.push('/my')" v-else></div>
+    <!--头部搜索 -->
+    <div :class="{header:true,scroll:isScroll}">
+      <div class="classify-icon" @click="$router.push('/goods/classify')"></div>
+      <div class="search" @click="showSearch">
+        <div class="search-icon"></div>
+        <div>输入喜欢的宝贝名称</div>
       </div>
-      <!-- 轮播 -->
-      <div class="swiper-container" ref="swiper-container">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide" v-for="(item,index) in banners" :key="index">
-            <img :src="item.image" alt />
-          </div>
+      <div class="login" @click="$router.push('/login')" v-if="!isLogin">登录</div>
+      <div class="my-icon" @click="$router.push('/my')" v-else></div>
+    </div>
+    <!-- 轮播 -->
+    <div class="swiper-container" ref="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" v-for="(item,index) in banners" :key="index">
+          <img :src="item.image" alt />
         </div>
-        <div class="swiper-pagination" ref="swiper-pagination"></div>
       </div>
-      <!-- 商品分类 -->
-      <div class="nav-wrap">
-        <ul class="item" v-for="(item,index) in navClass" :key="index">
-          <li>
-            <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-          </li>
-          <li>{{item.title}}</li>
-        </ul>
+      <div class="swiper-pagination" ref="swiper-pagination"></div>
+    </div>
+    <!-- 商品分类 -->
+    <div class="nav-wrap">
+      <ul class="item" v-for="(item,index) in navClass" :key="index">
+        <li>
+          <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+        </li>
+        <li>{{item.title}}</li>
+      </ul>
+    </div>
+    <!--商品展示 -->
+    <template v-for="(item,index) in goods">
+      <div class="goods-main" :key="index" v-if="(index+1)%2!==0">
+        <div :class="'goods-title color-'+index">—— {{item.title}} ——</div>
+        <div class="goods-row-1">
+          <div class="goods-column">
+            <div>{{item.items&&item.items[0].title}}</div>
+            <div>
+              <span>精品打折</span>
+              <span :class="'bg-color-'+index">{{item.items&&item.items[0].price}}</span>
+            </div>
+            <div>
+              <img
+                :data-echo="item.items&&item.items[0].image"
+                src="../../../assets/images/common/lazyImg.jpg"
+                alt
+              />
+            </div>
+          </div>
+          <div class="goods-column">
+            <div
+              class="goods-list goods-list1"
+              v-for="(item2,index2) in item.items.slice(1,3)"
+              :key="index2"
+            >
+              <div class="goods-list-title">
+                <div>{{item2.title}}</div>
+                <div>品质精挑</div>
+              </div>
+              <img :data-echo="item2.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+            </div>
+          </div>
+        </div>
+        <div class="goods-row-2">
+          <div class="goods-list" v-for="(item,index) in item.items.slice(3,7)" :key="index">
+            <div class="hidden">{{item.title}}</div>
+            <div>
+              <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
+            </div>
+            <div>¥{{item.price}}</div>
+            <div>¥{{item.price*2}}</div>
+          </div>
+        </div>
       </div>
-      <!--商品展示 -->
-      <template v-for="(item,index) in goods">
-        <div class="goods-main" :key="index" v-if="(index+1)%2!==0">
-          <div :class="'goods-title color-'+index">—— {{item.title}} ——</div>
-          <div class="goods-row-1">
-            <div class="goods-column">
-              <div>{{item.items&&item.items[0].title}}</div>
-              <div>
-                <span>精品打折</span>
-                <span :class="'bg-color-'+index">{{item.items&&item.items[0].price}}</span>
-              </div>
-              <div>
-                <img
-                  :data-echo="item.items&&item.items[0].image"
-                  src="../../../assets/images/common/lazyImg.jpg"
-                  alt
-                />
-              </div>
-            </div>
-            <div class="goods-column">
-              <div
-                class="goods-list goods-list1"
-                v-for="(item2,index2) in item.items.slice(1,3)"
-                :key="index2"
-              >
-                <div class="goods-list-title">
-                  <div>{{item2.title}}</div>
-                  <div>品质精挑</div>
-                </div>
-                <img :data-echo="item2.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-              </div>
-            </div>
-          </div>
-          <div class="goods-row-2">
-            <div class="goods-list" v-for="(item,index) in item.items.slice(3,7)" :key="index">
-              <div class="hidden">{{item.title}}</div>
-              <div>
-                <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-              </div>
-              <div>¥{{item.price}}</div>
-              <div>¥{{item.price*2}}</div>
+      <div class="goods-main" :key="index" v-else>
+        <div class="goods-title color-1">—— {{item.title}} ——</div>
+        <div class="goods-row-1">
+          <div class="goods-column" v-for="(item,index) in item.items.slice(0,2)" :key="index">
+            <div>{{item.title}}</div>
+            <div class="nz-tip">火爆开售</div>
+            <div class="nz-tip-img">
+              <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
             </div>
           </div>
         </div>
-        <div class="goods-main" :key="index" v-else>
-          <div class="goods-title color-1">—— {{item.title}} ——</div>
-          <div class="goods-row-1">
-            <div class="goods-column" v-for="(item,index) in item.items.slice(0,2)" :key="index">
-              <div>{{item.title}}</div>
-              <div class="nz-tip">火爆开售</div>
-              <div class="nz-tip-img">
-                <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-              </div>
+        <div class="goods-row-2">
+          <div class="goods-list" v-for="(item,index) in item.items.slice(2,6)" :key="index">
+            <div class="hidden">{{item.title}}</div>
+            <div>
+              <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
             </div>
-          </div>
-          <div class="goods-row-2">
-            <div class="goods-list" v-for="(item,index) in item.items.slice(2,6)" :key="index">
-              <div class="hidden">{{item.title}}</div>
-              <div>
-                <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-              </div>
-              <div>¥{{item.price}}</div>
-              <div>¥{{item.price*2}}</div>
-            </div>
+            <div>¥{{item.price}}</div>
+            <div>¥{{item.price*2}}</div>
           </div>
         </div>
-      </template>
-      <div class="goods-recommend">
+      </div>
+    </template>
+    <div class="goods-recommend">
+      <div>
+        <div class="left-line"></div>
+        <div class="text-tip">
+          <div></div>
+          <div>为你推荐</div>
+        </div>
+        <div class="right-line"></div>
+      </div>
+    </div>
+    <div class="recommend-content">
+      <div class="goods-show" v-for="(item,index) in recoms" :key="index">
         <div>
-          <div class="left-line"></div>
-          <div class="text-tip">
-            <div></div>
-            <div>为你推荐</div>
-          </div>
-          <div class="right-line"></div>
+          <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
         </div>
-      </div>
-      <div class="recommend-content">
-        <div class="goods-show" v-for="(item,index) in recoms" :key="index">
-          <div>
-            <img :data-echo="item.image" src="../../../assets/images/common/lazyImg.jpg" alt />
-          </div>
-          <div>
-            <p>{{item.title}}</p>
-          </div>
-          <div>¥{{item.price}}</div>
+        <div>
+          <p>{{item.title}}</p>
         </div>
+        <div>¥{{item.price}}</div>
       </div>
     </div>
-    <div v-else>
-      <search @update="change($event)"></search>
-    </div>
+    <search :show="searchShow"></search>
   </div>
 </template>
 
@@ -135,6 +131,7 @@ export default {
   data() {
     return {
       isScroll: false,
+      searchShow: { show: false },
       flag: this.$store.state.index.flag
     };
   },
@@ -150,7 +147,19 @@ export default {
   watch: {},
   created() {
     this.scroll = true;
-    this.getBanner();
+    this.getBanner({
+      success: () => {
+        this.$nextTick(function() {
+          new Swiper(this.$refs["swiper-container"], {
+            loop: true,
+            autoplay: 3000,
+            pagination: this.$refs["swiper-pagination"],
+            paginationClickable: true,
+            autoplayDisableOnInteraction: false
+          });
+        });
+      }
+    });
     this.getNav({
       success: () => {
         this.$nextTick(() => {
@@ -174,17 +183,7 @@ export default {
     });
     window.addEventListener("scroll", this.eventScrollTop);
   },
-  mounted() {
-    this.$nextTick(function() {
-      new Swiper(this.$refs["swiper-container"], {
-        loop: true,
-        autoplay: 3000,
-        pagination: this.$refs["swiper-pagination"],
-        paginationClickable: true,
-        autoplayDisableOnInteraction: false
-      });
-    });
-  },
+  mounted() {},
   destroyed() {
     //离开页面，移除监听
     window.removeEventListener("scroll", this.eventScrollTop);
@@ -204,8 +203,9 @@ export default {
       getProducts: "index/getProduct",
       getRecom: "index/getRecom"
     }),
-    change(e) {
-      this.flag = e;
+    showSearch() {
+      this.searchShow.show = true;
+      this.flag = false;
     },
     eventScrollTop() {
       let top = document.body.scrollTop || document.documentElement.scrollTop;
@@ -229,7 +229,6 @@ export default {
 #box {
   width: 100%;
   min-height: 100%;
-  position: relative;
   margin-bottom: 150px;
 }
 /* --------------header----------------- */
@@ -243,12 +242,12 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 30px;
   box-sizing: border-box;
+  z-index: 10;
 }
 .header.scroll {
   background: linear-gradient(rgb(235, 22, 37) 0%, rgba(255, 255, 255, 0) 100%);
@@ -298,7 +297,8 @@ export default {
 .swiper-container {
   height: 364px;
   width: 100%;
-  z-index: 1;
+  position: relative;
+  z-index: 0;
 }
 .swiper-container img {
   width: 100%;

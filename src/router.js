@@ -56,15 +56,15 @@ let router = new Router({
             ]
         },
         {
-            path: "/goods/goodsClassify",
+            path: "/goods/classify",
             name: "goodsClassify",
             component: () => import("./views/home/goods/goodsClassify"),
+            redirect: "/goods/classify/items", //页面重定向
             children: [{
-                path: "/goodsItems",
+                path: "items",
                 name: "goodsItems",
                 component: () => import("./views/home/goods/goodsItems"),
                 meta: {
-                    keepAlive: false,
                     title: "分类"
                 }
             }]
