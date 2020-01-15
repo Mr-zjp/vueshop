@@ -7,17 +7,25 @@
           <div class="search-icon"></div>
           <div>{{text}}</div>
         </div>
-        <div class="screen" @click="screenBox=!screenBox">筛选</div>
+        <div class="screen" @click="screenBox=true">筛选</div>
       </div>
       <div class="condition">
-        <div :class="{'color':comprehensive}" @click="comprehensive=!comprehensive">
+        <div
+          :class="{'color':comprehensive}"
+          @click="comprehensive=!comprehensive;salesVolume=false"
+        >
           <span>{{title}}</span>
           <span :class="{'bg-image-0':true,'bg-image-1':comprehensive}"></span>
         </div>
-        <div :class="{'color':salesVolume}" @click="salesVolume=!salesVolume">销量</div>
+        <div :class="{'color':salesVolume}" @click="salesVolume=true;comprehensive=false">销量</div>
       </div>
       <div class="condition-item" v-if="comprehensive">
-        <div v-for="(item,index) in conditionItems" :key="index" @click="title=item">{{item}}</div>
+        <div
+          v-for="(item,index) in conditionItems"
+          :key="index"
+          @click="changeCondition(index,item)"
+          :class="{'condition-item-color':conditionActive===index?true:false}"
+        >{{item.title}}</div>
       </div>
     </div>
     <div class="goods-main">
@@ -35,45 +43,62 @@
         </div>
       </div>
     </div>
-    <div :class="{'bg-opcity':screenBox}" @click="screenBox=false"></div>
-    <transition name="fade">
-      <div class="screen-box" v-if="screenBox">
-        <div class="title-tip">
-          <div class="goods-classify" @click="classify=!classify">
-            <span>分类</span>
-            <span :class="{'bg-img-0':true, 'bg-img-1':classify}"></span>
-          </div>
-          <div class="classify" v-if="classify">
-            <div
-              v-for="(item,index) in menu"
-              :key="index"
-              :class="{'bg-color-0':true,'bg-color-1':classifyActive===index?true:false}"
-              @click="checkClassify(index)"
-            >{{item.title}}</div>
-          </div>
+    <div class="bg-opcity" @click="screenBox=false" v-show="screenBox"></div>
+    <div :class="screenBox?'screen-box show-box':'screen-box unshow-box'">
+      <div class="title-tip">
+        <div class="goods-classify" @click="classify=!classify">
+          <span>分类</span>
+          <span :class="{'bg-img-0':true, 'bg-img-1':classify}"></span>
         </div>
-        <div class="title-tip">
-          <div class="price-section" @click="priceSection=!priceSection">
-            <span>价格区间</span>
-            <span :class="{'bg-img-0':true, 'bg-img-1':priceSection}"></span>
-          </div>
-          <div class="price-section-item" v-if="priceSection">
-            <div
-              v-for="(item,index) in price"
-              :key="index"
-              :class="{'bg-color-0':true,'bg-color-1':priceActive===index?true:false}"
-              @click="checkPrice(index)"
-            >{{item}}</div>
-          </div>
+        <div class="classify" v-if="classify">
+          <div
+            v-for="(item,index) in menu"
+            :key="index"
+            :class="{'bg-color-0':true,'bg-color-1':classifyActive===index?true:false}"
+            @click="checkClassify(index)"
+          >{{item.title}}</div>
         </div>
       </div>
-    </transition>
+      <div class="title-tip">
+        <div class="price-section" @click="priceSection=!priceSection">
+          <div>价格区间</div>
+          <div class="price-wrap" @click.stop>
+            <div class="price-input">
+              <input
+                type="tel"
+                placeholder="最低价"
+                :value="minPrice"
+                @input="SET_MINPRICE({minPrice:$event.target.value})"
+              />
+            </div>
+            <div class="price-line"></div>
+            <div class="price-input">
+              <input
+                type="tel"
+                placeholder="最高价"
+                :value="maxPrice"
+                @input="SET_MAXPRICE({maxPrice:$event.target.value})"
+              />
+            </div>
+          </div>
+          <div :class="{'bg-img-0':true, 'bg-img-1':priceSection}"></div>
+        </div>
+        <div class="price-section-item" v-if="priceSection">
+          <div
+            v-for="(item,index) in priceItems"
+            :key="index"
+            :class="{'bg-color-0':true,'bg-color-1':priceActive===index?true:false}"
+            @click="checkPrice(index,item)"
+          >{{item.price1}}-{{item.price2}}</div>
+        </div>
+      </div>
+    </div>
     <searchComponent :show="searchShow" :isGoodsClass="true" />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import searchComponent from "../../../components/search";
 export default {
   components: {
@@ -88,19 +113,26 @@ export default {
       text: this.$route.query.keyword ? this.$route.query.keyword : "",
       title: "综合",
       comprehensive: false, //控制综合样式
+      conditionActive: 0, //控制当前点击的分类的背景色
       salesVolume: false, //控制销量样式
       screenBox: false, //控制筛选
       classify: false, //控制分类
       priceSection: false, //控制价格区间
-      classifyActive: -1, //控制当前点击的分类的背景色
-      priceActive: -1, //控制当前点击的价格区间的背景色
-      conditionItems: ["综合", "价格由高到低", "价格由低到高"],
-      price: ["1-50", "51-99", "100-300", "301-1000", "1001-9999"]
+      classifyActive: 0, //控制当前点击的分类的背景色
+      priceActive: 0, //控制当前点击的价格区间的背景色
+      conditionItems: [
+        { otype: "all", title: "综合", active: true },
+        { otype: "up", title: "价格从低到高", active: true },
+        { otype: "down", title: "价格从高到低", active: true }
+      ]
     };
   },
   computed: {
     ...mapState({
-      menu: state => state.goods.menu
+      menu: state => state.goods.menu,
+      priceItems: state => state.search.priceItems,
+      minPrice: state => state.search.minPrice,
+      maxPrice: state => state.search.maxPrice
     })
   },
   watch: {},
@@ -117,14 +149,25 @@ export default {
     next();
   },
   methods: {
+    ...mapMutations({
+      SET_MAXPRICE: "search/SET_MAXPRICE",
+      SET_MINPRICE: "search/SET_MINPRICE"
+    }),
     ...mapActions({
       getMenu: "goods/getMenu"
     }),
+    changeCondition(index, item) {
+      this.conditionActive = index;
+      this.title = item.title;
+      this.comprehensive = false;
+    },
     checkClassify(index) {
       this.classifyActive = index;
     },
-    checkPrice(index) {
+    checkPrice(index, item) {
       this.priceActive = index;
+      this.SET_MINPRICE(item.price1);
+      this.SET_MAXPRICE(item.price2);
     }
   }
 };
@@ -207,7 +250,8 @@ export default {
   font-size: 32px;
   box-sizing: border-box;
 }
-.condition .color {
+.condition .color,
+.condition-item-color {
   color: #fad208;
 }
 .condition div:nth-child(1) {
@@ -282,13 +326,28 @@ export default {
   color: #fda208;
 }
 .screen-box {
-  width: 600px;
+  width: 80%;
   height: 100%;
-  z-index: 10;
-  background: white;
   position: fixed;
-  right: 0;
-  top: 0;
+  z-index: 100;
+  right: 0px;
+  top: 0px;
+  background-color: #ffffff;
+  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+  overflow: hidden;
+}
+.screen-box.show-box {
+  transition: transform 1s;
+  -webkit-transition: transform 1s;
+  transform: translateX(0%);
+  -webkit-transform: translateX(0%);
+}
+.screen-box.unshow-box {
+  transition: transform 0.5s;
+  -webkit-transition: transform 0s;
+  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
 }
 .screen-box > .title-tip {
   border-bottom: 1px solid #ccc;
@@ -354,13 +413,31 @@ export default {
   background: #fda208;
   color: white;
 }
-.fade-enter {
-  right: -600px;
+.price-wrap {
+  width: auto;
+  height: auto;
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+  margin-left: 18%;
 }
-.fade-enter-active {
-  transition: all 1s;
+.price-wrap .price-input {
+  width: 100px;
+  height: 40px;
+  border: 1px solid #efefef;
 }
-.fade-leave {
-  right: 600px;
+.price-wrap .price-input input {
+  width: 100%;
+  height: 89%;
+  font-size: 28px;
+  text-align: center;
+}
+.price-wrap .price-line {
+  width: 40px;
+  height: 1px;
+  background-color: black;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 </style>

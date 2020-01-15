@@ -8,6 +8,16 @@ export default {
         record: sessionStorage.getItem('record') ? sessionStorage.getItem('record').split(',') : [],
         searchHot: [],
         resultData:[],
+        priceItems:[
+            {price1:1,price2:50},
+            {price1:51,price2:99},
+            {price1:100,price2:300},
+            {price1:301,price2:1000},
+            {price1:1001,price2:4000},
+            {price1:4001,price2:9999}
+        ],//价格区间
+        minPrice:"",//最低价
+        maxPrice:"",//最高价
     },
     mutations: {
         ['SET_RECORD'](state, payload) {
@@ -23,6 +33,12 @@ export default {
         },
         ['GET_SEARCHRESULT'](state,payload){
             state.resultData = payload.resultData
+        },
+        ['SET_MINPRICE'](state,payload){
+            state.minPrice=payload;
+        },
+        ['SET_MAXPRICE'](state,payload){
+            state.maxPrice=payload;
         }
     },
     actions: {
