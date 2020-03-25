@@ -48,7 +48,6 @@ export default {
             })
         },
         setVal(conText, payload) {
-            console.log(payload)
             conText.commit('SET_VAL', payload)
         },
         setId(conText, payload) {

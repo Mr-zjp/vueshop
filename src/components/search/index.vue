@@ -73,7 +73,9 @@ export default {
   created() {
     this.getHotSearch();
   },
-  mounted() {},
+  mounted() {
+    console.log("this.newHot",this.newHot)
+  },
   methods: {
     ...mapMutations({
       SET_RECORD: "search/SET_RECORD",
@@ -93,7 +95,7 @@ export default {
           this.record.unshift(params);
           this.SET_RECORD(this.record);
         }
-        //this.getResult(params);
+        this.getResult(params);
       }
       this.show.show = false;
       if (this.isGoodsClass) {

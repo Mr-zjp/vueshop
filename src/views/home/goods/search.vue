@@ -29,16 +29,16 @@
       </div>
     </div>
     <div class="goods-main">
-      <div class="goods-content">
+      <div class="goods-content" v-for="(item,index) in resultData" :key="index">
         <div class="show-img">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524557968.jpg" alt />
+          <img :src="item.image" alt />
         </div>
         <div class="goods-tip">
-          <div class="title">酷睿i5四核GTX1060独显台式机组装电脑主机整机 绝地求生吃鸡游戏</div>
-          <div class="price">$2580</div>
+          <div class="title">{{item.title}}</div>
+          <div class="price">${{item.price}}</div>
           <div class="salesVolume">
             销量
-            <span class="num">{{'0'}}</span>件
+            <span class="num">{{item.sales}}</span>件
           </div>
         </div>
       </div>
@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import IScroll from "../../../assets/js/iscroll";
 import { mapState, mapActions, mapMutations } from "vuex";
 import searchComponent from "../../../components/search";
 export default {
@@ -132,7 +133,8 @@ export default {
       menu: state => state.goods.menu,
       priceItems: state => state.search.priceItems,
       minPrice: state => state.search.minPrice,
-      maxPrice: state => state.search.maxPrice
+      maxPrice: state => state.search.maxPrice,
+      resultData:state=>state.search.resultData
     })
   },
   watch: {},
@@ -142,10 +144,17 @@ export default {
         //console.log(111);
       }
     });
+    this.getResult({kwords:this.text,success:()=>{
+       this.$nextTick(() => {
+         
+        });
+    }})
   },
   mounted() {},
+  destroyed(){},
   beforeRouteUpdate(to, from, next) {
     this.text = to.query.keyword;
+     this.getResult({kwords:this.text})
     next();
   },
   methods: {
@@ -154,7 +163,8 @@ export default {
       SET_MINPRICE: "search/SET_MINPRICE"
     }),
     ...mapActions({
-      getMenu: "goods/getMenu"
+      getMenu: "goods/getMenu",
+      getResult:"search/getResult"
     }),
     changeCondition(index, item) {
       this.conditionActive = index;
@@ -194,7 +204,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 9999;
 }
 .header {
   height: 100px;
@@ -290,6 +300,7 @@ export default {
   width: 100%;
   height: 200px;
   display: flex;
+  margin-top: 100px;
 }
 .goods-content .show-img {
   width: 200px;

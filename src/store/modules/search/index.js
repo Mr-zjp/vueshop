@@ -1,6 +1,7 @@
 import {
     getSearchData,
-    getResultData
+    getResultData,
+    getShopAttribute,
 } from "../../../utils/api/search";
 export default {
     namespaced: true,
@@ -32,17 +33,17 @@ export default {
             state.searchHot = payload
         },
         ['GET_SEARCHRESULT'](state,payload){
-            state.resultData = payload.resultData
+            state.resultData = payload
         },
         ['SET_MINPRICE'](state,payload){
             state.minPrice=payload;
         },
         ['SET_MAXPRICE'](state,payload){
             state.maxPrice=payload;
-        }
+        },
     },
     actions: {
-        getHotSearch(conText, paylaod) {
+        getHotSearch(conText) {
             getSearchData().then(res => {
                 if (res.code === 200) {
                     conText.commit('GET_HOTSEARCH', res.data)
@@ -51,10 +52,15 @@ export default {
         },
         getResult(conText,payload){
             getResultData(payload).then(res=>{
+                console.log(res.data)
+                if(res.code==200){
+                    conText.commit("GET_SEARCHRESULT",res.data)
+                }
             }).catch(()=>{})
         }
     },
     getters: {
+        //过滤空的搜索标签
         getArr(state) {
             let arr = state.searchHot.filter(res => {
                 return res.title.length>0
